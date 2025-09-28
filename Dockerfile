@@ -1,10 +1,19 @@
-# Use a lightweight Nginx image
-FROM nginx:alpine
+# Use Python base image
+FROM python:3.9-slim
 
-# Copy your static site (HTML/CSS/JS) to nginx's default folder
-COPY . /usr/share/nginx/html
+# Set working directory
+WORKDIR /app
 
-# Expose port 80
-EXPOSE 80
+# Copy requirements and install dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Nginx runs automatically
+# Copy application files
+COPY app.py .
+COPY index.html .
+
+# Expose port 8000
+EXPOSE 8000
+
+# Run the FastAPI application
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]

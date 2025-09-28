@@ -202,12 +202,19 @@ async function calculate() {
   let rsiValue = "N/A";
   if (stock) {
     try {
-      const res = await fetch(`http://127.0.0.1:8000/rsi?symbol=${stock}`);
+      const res = await fetch(`https://stock-avg.onrender.com/rsi?symbol=${stock}`);
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
       const data = await res.json();
+      if (data.error) {
+        throw new Error(data.error);
+      }
       rsiValue = data.rsi ? data.rsi.toFixed(2) : "N/A";
       document.getElementById("rsiResult").innerHTML = `<p><b>RSI (14):</b> ${rsiValue}</p>`;
     } catch (e) {
-      document.getElementById("rsiResult").innerHTML = "<p>⚠️ Unable to fetch RSI.</p>";
+      console.error("RSI fetch error:", e);
+      document.getElementById("rsiResult").innerHTML = `<p>⚠️ Unable to fetch RSI. ${e.message || 'Please check your internet connection and try again.'}</p>`;
     }
   }
 
