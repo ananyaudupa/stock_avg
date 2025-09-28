@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Stock Average & Profit Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f9;
+      padding: 20px;
+      text-align: center;
+    }
+    h2 {
+      color: #333;
+    }
+    .container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 600px;
+      margin: auto;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .row {
+      margin: 10px 0;
+    }
+    input {
+      padding: 8px;
+      margin: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 120px;
+    }
+    button {
+      padding: 10px 15px;
+      margin: 10px;
+      border: none;
+      border-radius: 5px;
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .result {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 8px;
+      background: #f9f9f9;
+      text-align: left;
+    }
+    .profit { color: green; }
+    .loss { color: red; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>📈 Stock Average & Profit Calculator</h2>
+
+    <div id="buys"></div>
+    <button onclick="addBuy()">➕ Add Buy</button>
+
+    <div class="row">
+      <input type="number" id="currentPrice" placeholder="Current Price">
+    </div>
+    <button onclick="calculate()">Calculate</button>
+
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    let buyCount = 0;
+    function addBuy() {
+      buyCount++;
+      const div = document.createElement('div');
+      div.className = "row";
+      div.innerHTML = `
+        Buy ${buyCount}: 
+        <input type="number" class="price" placeholder="Price"> 
+        <input type="number" class="qty" placeholder="Quantity">`;
+      document.getElementById("buys").appendChild(div);
+    }
+
+    function calculate() {
+      const prices = document.querySelectorAll(".price");
+      const qtys = document.querySelectorAll(".qty");
+      let totalInvestment = 0, totalQty = 0;
+
+      for (let i = 0; i < prices.length; i++) {
+        const p = parseFloat(prices[i].value) || 0;
+        const q = parseInt(qtys[i].value) || 0;
+        totalInvestment += p * q;
+        totalQty += q;
+      }
+
+      if (totalQty === 0) {
+        document.getElementById("result").innerHTML = "<p>Please enter some values.</p>";
+        return;
+      }
+
+      const avgPrice = totalInvestment / totalQty;
+      const currentPrice = parseFloat(document.getElementById("currentPrice").value) || 0;
+      const currentValue = currentPrice * totalQty;
+      const profitLoss = currentValue - totalInvestment;
+
+      document.getElementById("result").innerHTML = `
+        <p><b>Average Buy Price:</b> ₹${avgPrice.toFixed(2)}</p>
+        <p><b>Total Investment:</b> ₹${totalInvestment.toFixed(2)}</p>
+        <p><b>Current Value:</b> ₹${currentValue.toFixed(2)}</p>
+        <p><b>Profit/Loss:</b> 
+          <span class="${profitLoss >= 0 ? 'profit' : 'loss'}">
+            ₹${profitLoss.toFixed(2)}
+          </span>
+        </p>`;
+    }
+
+    // Start with one row
+    addBuy();
+  </script>
+</body>
+</html>
